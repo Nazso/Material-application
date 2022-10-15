@@ -1,0 +1,60 @@
+<mat-form-field style="margin-right: 1rem;">
+    <mat-label>Field</mat-label>
+    <mat-select [ngModel]="currentFilterKey">
+        <mat-option [value]="''">all field</mat-option>
+        <mat-option
+            *ngFor="let col of displayedColumns"
+            [value]="col"
+            >{{ col }}</mat-option>
+    </mat-select>
+</mat-form-field>
+<mat-form-field style="margin-right: 1rem;">
+    <mat-label>Filter</mat-label>
+    <input
+        matInput
+        type="text"
+        (keyup)="applyFilter($event)"
+        placeholder="type a pharse">
+</mat-form-field>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <!-- define columns -->
+    <ng-container *ngFor="let col of displayedColumns" [matColumnDef]="col">
+        <th mat-header-cell *matHeaderCellDef>{{ col | titlecase }}</th>
+        <td mat-cell *matCellDef="let user">
+            <div *ngIf="col !== 'actions'; else actionBlock">
+                {{ user[col] }}
+            </div>
+            <ng-template #actionBlock>
+                <div class="mat-btn-group">
+                    <button mat-raised-button class="info" (click)="onEdit(user)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-raised-button class="danger" (click)="onDelete(user)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+            </ng-template>
+        </td>
+    </ng-container>
+
+    <!-- Define rows -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<mat-paginator
+    class="mat-elevation-z8"
+    [pageSizeOptions]="pageSizes"
+    showFirstLatButtons
+></mat-paginator>
+
+<!-- Dialog -->
+<ng-template #dialogTemplate let-data>
+    <h3 class="custom-dialog-title">{{ data.title }}</h3>
+    <p class="custom-dialog-content">{{ data.content }}</p>
+    <div class="btn-group custom-dialog-buttons">
+        <button class="btn btn-secondary" [mat-dialog-close]="">Cancel</button>
+        <button class="btn btn-primary" [mat-dialog-close]="data">Ok</button>
+    </div>
+</ng-template>
